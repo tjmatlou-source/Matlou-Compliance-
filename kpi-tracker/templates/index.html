@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KPI Dashboard — Matlou Compliance Consulting</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root { --primary: #2c3e50; --accent: #27ae60; --light: #f4f7f6; --white: #fff; --gray: #7f8c8d; }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Inter', sans-serif; background: var(--light); color: #333; }
+        .container { max-width: 1200px; margin: 0 auto; padding: 20px; }
+        header { background: var(--primary); color: var(--white); padding: 20px 0; }
+        header h1 { font-size: 24px; }
+        header span { color: var(--accent); }
+        header p { font-size: 14px; opacity: 0.8; margin-top: 5px; }
+        .kpi-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; margin: 30px 0; }
+        .kpi-card { background: var(--white); padding: 25px; border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); text-align: center; }
+        .kpi-card h3 { font-size: 14px; color: var(--gray); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px; }
+        .kpi-card .number { font-size: 36px; font-weight: 700; color: var(--primary); }
+        .kpi-card .number.accent { color: var(--accent); }
+        .kpi-card .sub { font-size: 12px; color: var(--gray); margin-top: 5px; }
+        .section { background: var(--white); border-radius: 10px; padding: 25px; margin-bottom: 25px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
+        .section h2 { font-size: 18px; color: var(--primary); margin-bottom: 20px; }
+        table { width: 100%; border-collapse: collapse; }
+        th { text-align: left; padding: 12px 10px; border-bottom: 2px solid #eee; font-size: 12px; text-transform: uppercase; color: var(--gray); letter-spacing: 1px; }
+        td { padding: 12px 10px; border-bottom: 1px solid #f0f0f0; font-size: 14px; }
+        .badge { display: inline-block; padding: 3px 10px; border-radius: 12px; font-size: 12px; font-weight: 600; }
+        .badge.active { background: #e8f5e9; color: #2e7d32; }
+        .badge.onboarding { background: #fff3e0; color: #e65100; }
+        .badge.gold { background: #fff8e1; color: #f57f17; }
+        .badge.silver { background: #f5f5f5; color: #616161; }
+        .type-grid { display: flex; gap: 15px; flex-wrap: wrap; }
+        .type-item { background: var(--light); padding: 15px 20px; border-radius: 8px; text-align: center; min-width: 120px; }
+        .type-item .num { font-size: 24px; font-weight: 700; color: var(--primary); }
+        .type-item .label { font-size: 13px; color: var(--gray); margin-top: 5px; }
+        footer { text-align: center; padding: 30px; color: var(--gray); font-size: 13px; }
+    </style>
+</head>
+<body>
+<header>
+    <div class="container">
+        <h1>Matlou <span>Compliance</span> Consulting</h1>
+        <p>KPI Dashboard — Live Performance Metrics</p>
+    </div>
+</header>
+<div class="container">
+
+    <div class="kpi-grid">
+        <div class="kpi-card">
+            <h3>Active Clients</h3>
+            <div class="number">{{ active_count }}</div>
+            <div class="sub">Currently on retainer: {{ retainer_count }}</div>
+        </div>
+        <div class="kpi-card">
+            <h3>Monthly Recurring Revenue</h3>
+            <div class="number accent">R{{ "{:,.0f}".format(mrr) }}</div>
+            <div class="sub">Gold: R7,500 · Silver: R3,500</div>
+        </div>
+        <div class="kpi-card">
+            <h3>Project Revenue</h3>
+            <div class="number">R{{ "{:,.0f}".format(project_revenue) }}</div>
+            <div class="sub">One-off engagements to date</div>
+        </div>
+        <div class="kpi-card">
+            <h3>Project → Retainer</h3>
+            <div class="number accent">{{ conversion_rate }}%</div>
+            <div class="sub">Conversion rate</div>
+        </div>
+    </div>
+
+    <div class="section">
+        <h2>Clients by Type</h2>
+        <div class="type-grid">
+            {% for type, count in by_type.items() %}
+            <div class="type-item">
+                <div class="num">{{ count }}</div>
+                <div class="label">{{ type }}</div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <div class="section">
+        <h2>All Clients</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Type</th>
+                    <th>Status</th>
+                    <th>Risk</th>
+                    <th>Retainer</th>
+                    <th>Started</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for c in clients %}
+                <tr>
+                    <td><strong>{{ c.name }}</strong></td>
+                    <td>{{ c.type }}</td>
+                    <td><span class="badge {{ c.status }}">{{ c.status }}</span></td>
+                    <td>{{ c.risk_rating or '—' }}</td>
+                    <td>{% if c.retainer_tier %}<span class="badge {{ c.retainer_tier.lower() }}">{{ c.retainer_tier }}</span>{% else %}—{% endif %}</td>
+                    <td>{{ c.start_date or '—' }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <div class="section">
+        <h2>Recent Engagements</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Client</th>
+                    <th>Service</th>
+                    <th>Fee</th>
+                    <th>Type</th>
+                    <th>Date</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for e in engagements %}
+                <tr>
+                    <td><strong>{{ e.client_name }}</strong></td>
+                    <td>{{ e.service_type }}</td>
+                    <td>R{{ "{:,.0f}".format(e.fee) }}</td>
+                    <td>{% if e.is_recurring %}🔄 Monthly{% else %}📋 Project{% endif %}</td>
+                    <td>{{ e.start_date }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+<footer>
+    Matlou Compliance Consulting &mdash; Internal KPI Dashboard &mdash; Data from shared team database
+</footer>
+</body>
+</html>
