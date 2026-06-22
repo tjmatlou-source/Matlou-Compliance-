@@ -6,8 +6,11 @@ require('dotenv').config();
 module.exports = {
 
   development: {
-    client: 'postgresql',
-    connection: process.env.DATABASE_URL || 'postgres://localhost/verilend',
+    client: 'sqlite3',
+    connection: {
+      filename: './dev.sqlite3'
+    },
+    useNullAsDefault: true,
     migrations: {
       tableName: 'knex_migrations'
     }
