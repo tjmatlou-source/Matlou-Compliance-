@@ -29,3 +29,16 @@ VeriLend is a P2P lending platform for the South African market.
 1. `cd frontend`
 2. `npm install`
 3. `npm run dev`
+
+## Roadmap
+
+- [x] Technical Architecture Design
+- [x] Project Scaffolding (Backend/Frontend)
+- [x] Database Schema Implementation
+- [x] User Authentication (JWT)
+- [x] Frontend Routing & Placeholder Pages
+- [ ] KYC/Vetting Integration (ThisIsMe/SmileID/Stitch)
+- [ ] Loan Marketplace Implementation
+- [ ] Payment Gateway Integration (Ozow/PayFast)
+- [ ] Automated Debit Orders (Netcash)
+
