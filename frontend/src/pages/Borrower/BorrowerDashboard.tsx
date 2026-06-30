@@ -1,19 +1,52 @@
-import React from 'react';
+import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { 
   PlusCircle, 
   Clock, 
   CheckCircle2, 
-  AlertCircle, 
   TrendingUp, 
   Wallet,
-  ArrowUpRight,
-  History
+  History,
+  Shield,
+  Loader2
 } from 'lucide-react';
+import { useAuthStore } from '../../context/authStore';
+import { authService } from '../../services/authService';
 
 const BorrowerDashboard = () => {
-  // Mock data for demo
-  const user = { name: "Sipho" };
+  const user = useAuthStore((state) => state.user);
+  const updateUser = useAuthStore((state) => state.updateUser);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchProfile = async () => {
+      try {
+        const profileData = await authService.getProfile();
+        if (profileData.profile) {
+          updateUser({
+            firstName: profileData.profile.first_name,
+            lastName: profileData.profile.last_name
+          });
+        }
+      } catch (err) {
+        console.error('Failed to fetch profile', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProfile();
+  }, [updateUser]);
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-[60vh]">
+        <Loader2 className="h-12 w-12 text-blue-600 animate-spin" />
+      </div>
+    );
+  }
+
+  // Mock data for demo - in a real app these would come from the API
   const activeLoan = {
     amount: 5000,
     status: 'ACTIVE',
@@ -22,11 +55,13 @@ const BorrowerDashboard = () => {
     nextAmount: 850
   };
 
+  const displayName = user?.firstName || user?.email.split('@')[0] || 'Borrower';
+
   return (
     <div className="max-w-7xl mx-auto px-4 py-8">
       <div className="flex flex-col md:flex-row md:items-center justify-between mb-10 gap-4">
         <div>
-          <h1 className="text-3xl font-black text-slate-900">Sawubona, {user.name} 👋</h1>
+          <h1 className="text-3xl font-black text-slate-900">Sawubona, {displayName} 👋</h1>
           <p className="text-slate-500">Welcome to your VeriLend dashboard.</p>
         </div>
         <Link to="/loans/apply" className="inline-flex items-center justify-center bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-xl font-bold transition shadow-lg shadow-blue-600/20">

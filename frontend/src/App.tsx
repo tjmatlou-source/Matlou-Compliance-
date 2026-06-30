@@ -1,6 +1,6 @@
-import React from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { Layout } from './components/Layout/Layout';
+import ProtectedRoute from './components/Common/ProtectedRoute';
 import LandingPage from './pages/Landing/LandingPage';
 import { LoginPage, RegisterPage } from './pages/Auth/AuthPages';
 import BorrowerDashboard from './pages/Borrower/BorrowerDashboard';
@@ -17,15 +17,19 @@ function App() {
           <Route path="login" element={<LoginPage />} />
           <Route path="register" element={<RegisterPage />} />
           
-          {/* Borrower Routes (Mocked Auth) */}
-          <Route path="borrower">
-            <Route index element={<BorrowerDashboard />} />
-            <Route path="apply" element={<LoanApplicationPage />} />
+          {/* Borrower Routes */}
+          <Route element={<ProtectedRoute allowedRoles={['BORROWER']} />}>
+            <Route path="borrower">
+              <Route index element={<BorrowerDashboard />} />
+              <Route path="apply" element={<LoanApplicationPage />} />
+            </Route>
           </Route>
 
-          {/* Lender Routes (Mocked Auth) */}
-          <Route path="lender">
-            <Route index element={<LenderDashboard />} />
+          {/* Lender Routes */}
+          <Route element={<ProtectedRoute allowedRoles={['LENDER']} />}>
+            <Route path="lender">
+              <Route index element={<LenderDashboard />} />
+            </Route>
           </Route>
 
           {/* Marketplace */}

@@ -1,6 +1,5 @@
-import React from 'react';
 import { Link } from 'react-router-dom';
-import { ShieldCheck, TrendingUp, Users, ArrowRight, CheckCircle2 } from 'lucide-react';
+import { ShieldCheck, TrendingUp, ArrowRight, CheckCircle2 } from 'lucide-react';
 
 const LandingPage = () => {
   return (

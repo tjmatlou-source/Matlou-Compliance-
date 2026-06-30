@@ -1,9 +1,19 @@
 import React from 'react';
-import { Link, Outlet } from 'react-router-dom';
+import { Link, Outlet, useNavigate } from 'react-router-dom';
 import { Menu, X, Shield, User, LogOut } from 'lucide-react';
+import { useAuthStore } from '../../context/authStore';
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = React.useState(false);
+  const { isAuthenticated, user, logout } = useAuthStore();
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    logout();
+    navigate('/');
+  };
+
+  const dashboardPath = user?.role === 'BORROWER' ? '/borrower' : '/lender';
 
   return (
     <nav className="bg-blue-600 text-white shadow-lg">
@@ -19,7 +29,24 @@ const Navbar = () => {
           <div className="hidden md:flex items-center space-x-8">
             <Link to="/marketplace" className="hover:text-blue-200 transition">Marketplace</Link>
             <Link to="/how-it-works" className="hover:text-blue-200 transition">How it Works</Link>
-            <Link to="/login" className="bg-white text-blue-600 px-4 py-2 rounded-lg font-medium hover:bg-blue-50 transition">Login</Link>
+            
+            {isAuthenticated ? (
+              <div className="flex items-center space-x-6">
+                <Link to={dashboardPath} className="flex items-center space-x-2 hover:text-blue-200 transition">
+                  <User className="h-5 w-5" />
+                  <span>Dashboard</span>
+                </Link>
+                <button 
+                  onClick={handleLogout}
+                  className="flex items-center space-x-2 bg-blue-700 hover:bg-blue-800 px-4 py-2 rounded-lg transition"
+                >
+                  <LogOut className="h-5 w-5" />
+                  <span>Logout</span>
+                </button>
+              </div>
+            ) : (
+              <Link to="/login" className="bg-white text-blue-600 px-4 py-2 rounded-lg font-medium hover:bg-blue-50 transition">Login</Link>
+            )}
           </div>
 
           <div className="md:hidden flex items-center">
@@ -34,7 +61,21 @@ const Navbar = () => {
         <div className="md:hidden bg-blue-700 pb-4 px-4 space-y-2">
           <Link to="/marketplace" className="block py-2 hover:bg-blue-800 rounded px-2">Marketplace</Link>
           <Link to="/how-it-works" className="block py-2 hover:bg-blue-800 rounded px-2">How it Works</Link>
-          <Link to="/login" className="block py-2 bg-white text-blue-600 rounded text-center font-bold">Login</Link>
+          
+          {isAuthenticated ? (
+            <>
+              <Link to={dashboardPath} className="block py-2 hover:bg-blue-800 rounded px-2">Dashboard</Link>
+              <button 
+                onClick={handleLogout}
+                className="w-full text-left py-2 hover:bg-blue-800 rounded px-2 flex items-center space-x-2"
+              >
+                <LogOut className="h-5 w-5" />
+                <span>Logout</span>
+              </button>
+            </>
+          ) : (
+            <Link to="/login" className="block py-2 bg-white text-blue-600 rounded text-center font-bold">Login</Link>
+          )}
         </div>
       )}
     </nav>
