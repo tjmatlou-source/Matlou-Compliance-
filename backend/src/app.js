@@ -5,6 +5,7 @@ const dbPlugin = require('./plugins/db');
 const authPlugin = require('./plugins/auth');
 const authRoutes = require('./routes/auth');
 const profileRoutes = require('./routes/profile');
+const backgroundCheckRoutes = require('./routes/backgroundChecks');
 
 function build(opts = {}) {
   const app = fastify(opts);
@@ -28,6 +29,7 @@ function build(opts = {}) {
 
   app.register(authRoutes, { prefix: '/auth' });
   app.register(profileRoutes, { prefix: '/profile' });
+  app.register(backgroundCheckRoutes, { prefix: '/background-checks' });
 
   return app;
 }
