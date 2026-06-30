@@ -1,17 +1,51 @@
-import React from 'react';
+import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { 
   TrendingUp, 
   PieChart, 
-  Search, 
   ArrowRight, 
-  ShieldCheck,
   Zap,
   BarChart3,
-  Filter
+  Loader2
 } from 'lucide-react';
+import { useAuthStore } from '../../context/authStore';
+import { authService } from '../../services/authService';
 
 const LenderDashboard = () => {
+  const user = useAuthStore((state) => state.user);
+  const updateUser = useAuthStore((state) => state.updateUser);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchProfile = async () => {
+      try {
+        const profileData = await authService.getProfile();
+        if (profileData.profile) {
+          updateUser({
+            firstName: profileData.profile.first_name,
+            lastName: profileData.profile.last_name
+          });
+        }
+      } catch (err) {
+        console.error('Failed to fetch profile', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProfile();
+  }, [updateUser]);
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-[60vh]">
+        <Loader2 className="h-12 w-12 text-blue-600 animate-spin" />
+      </div>
+    );
+  }
+
+  const displayName = user?.firstName || user?.email.split('@')[0] || 'Investor';
+
   const stats = [
     { label: 'Total Invested', value: 'R 25,000', change: '+12%', color: 'blue' },
     { label: 'Total Earned', value: 'R 3,450', change: '+R 420', color: 'green' },
@@ -28,7 +62,7 @@ const LenderDashboard = () => {
     <div className="max-w-7xl mx-auto px-4 py-8">
       <div className="flex flex-col md:flex-row md:items-center justify-between mb-10 gap-4">
         <div>
-          <h1 className="text-3xl font-black text-slate-900">Investor Portal</h1>
+          <h1 className="text-3xl font-black text-slate-900">Investor Portal: {displayName}</h1>
           <p className="text-slate-500">Managing your P2P lending portfolio.</p>
         </div>
         <div className="flex space-x-4">

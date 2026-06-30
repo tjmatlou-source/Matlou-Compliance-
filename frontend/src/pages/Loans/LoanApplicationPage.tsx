@@ -1,19 +1,16 @@
-import React from 'react';
+import { useState } from 'react';
 import { 
   ArrowLeft, 
   Info, 
-  Wallet, 
-  Calendar, 
-  HelpCircle,
   ChevronRight,
   ShieldCheck
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 const LoanApplicationPage = () => {
-  const [step, setStep] = React.useState(1);
-  const [amount, setAmount] = React.useState(5000);
-  const [term, setTerm] = React.useState(6);
+  const [step, setStep] = useState(1);
+  const [amount, setAmount] = useState(5000);
+  const [term, setTerm] = useState(6);
 
   const calculateMonthly = () => {
     const interest = 0.15; // 15% for the term
