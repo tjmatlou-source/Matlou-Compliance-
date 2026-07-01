@@ -6,6 +6,8 @@ const authPlugin = require('./plugins/auth');
 const authRoutes = require('./routes/auth');
 const profileRoutes = require('./routes/profile');
 const backgroundCheckRoutes = require('./routes/backgroundChecks');
+const walletRoutes = require('./routes/wallet');
+const loanRoutes = require('./routes/loans');
 
 function build(opts = {}) {
   const app = fastify(opts);
@@ -30,6 +32,8 @@ function build(opts = {}) {
   app.register(authRoutes, { prefix: '/auth' });
   app.register(profileRoutes, { prefix: '/profile' });
   app.register(backgroundCheckRoutes, { prefix: '/background-checks' });
+  app.register(walletRoutes, { prefix: '/wallet' });
+  app.register(loanRoutes, { prefix: '/loans' });
 
   return app;
 }
